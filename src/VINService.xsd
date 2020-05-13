@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vin="http://services.mig.com/vin" xmlns:err="http://services.mig.com/ErrorTypes" targetNamespace="http://services.mig.com/vin" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:import namespace="http://services.mig.com/ErrorTypes" schemaLocation="../shared/xsd/ErrorTypes.xsd"/>
+	<xs:element name="GetRegisteredVehicles" type="vin:GetRegisteredVehiclesType"/>
+	<xs:element name="GetRegisteredVehiclesResponse" type="vin:GetRegisteredVehiclesResponseType"/>
+	<xs:complexType name="GetRegisteredVehiclesType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Business" type="vin:BusinessType"/>
+				<xs:element name="Person" type="vin:PersonType"/>
+			</xs:choice>
+			<xs:element name="Address" type="vin:AddressType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BusinessType">
+		<xs:sequence>
+			<xs:element name="BusinessName" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonType">
+		<xs:sequence>
+			<xs:element name="FirstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="MiddleName" type="xs:string" minOccurs="0"/>
+			<xs:element name="LastName" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AddressType">
+		<xs:sequence>
+			<xs:element name="AddressLine1" type="xs:string"/>
+			<xs:element name="AddressLine2" type="xs:string" minOccurs="0"/>
+			<xs:element name="City" type="xs:string"/>
+			<xs:element name="State" type="vin:StateType"/>
+			<xs:element name="Zip" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="StateType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="GetRegisteredVehiclesResponseType">
+		<xs:sequence>
+			<xs:element name="Status" type="vin:GetRegisteredVehiclesStatusType"/>
+			<xs:element name="Vehicles" type="vin:VehicleListType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="GetRegisteredVehiclesStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="No Vehicles Found"/>
+			<xs:enumeration value="Success - Partial Records"/>
+			<xs:enumeration value="Success"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="VehicleListType">
+		<xs:sequence>
+			<xs:element name="Vehicle" type="vin:VehicleType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VehicleType">
+		<xs:sequence>
+			<xs:element name="VINStatus" type="vin:VINStatusType"/>
+			<xs:element name="VIN" type="xs:string"/>
+			<xs:element name="CorrectedVIN" type="xs:string" minOccurs="0"/>
+			<xs:element name="Type" type="vin:VehicleType_Type"/>
+			<xs:element name="Year" type="vin:VehicleYearType"/>
+			<xs:element name="Make" type="xs:string"/>
+			<xs:element name="Model" type="xs:string"/>
+			<xs:element name="Weight" type="xs:int" minOccurs="0"/>
+			<xs:element name="EngineSizeCC" type="xs:int" minOccurs="0"/>
+			<xs:element name="OriginalCostNew" type="xs:int" minOccurs="0"/>
+			<xs:element name="LicensePlate" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="VINStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Corrected"/>
+			<xs:enumeration value="Invalid"/>
+			<xs:enumeration value="Not Available"/>
+			<xs:enumeration value="Not Found"/>
+			<xs:enumeration value="Not Validated"/>
+			<xs:enumeration value="Valid"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VehicleType_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Private Passenger"/>
+			<xs:enumeration value="Public Transportation"/>
+			<xs:enumeration value="Motorcycle"/>
+			<xs:enumeration value="Special"/>
+			<xs:enumeration value="Truck"/>
+			<xs:enumeration value="Unknown"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VehicleYearType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[12][0-9]{3}|0000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="ValidateVIN" type="vin:ValidateVINType"/>
+	<xs:complexType name="ValidateVINType">
+		<xs:sequence>
+			<xs:element name="VIN" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ValidateVINResponse" type="vin:VehicleListType"/>
+	<xs:element name="RestrictedRecordError" type="err:InvalidRequestErrorType"/>
+</xs:schema>
